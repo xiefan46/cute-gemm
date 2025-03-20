@@ -37,7 +37,7 @@ int main() {
   using mma_traits = MMA_Traits<mma_op>;
   using mma_atom = MMA_Atom<mma_traits>;
 
-  using MMA = decltype(make_tiled_mma(mma_atom{}, make_layout(Shape<_2, _2, _1>), make_layout(Shape<_1, _2, _1>)));
+  using MMA = decltype(make_tiled_mma(mma_atom{}, make_layout(Shape<_2, _2, _1>{}), make_layout(Shape<_1, _2, _1>{})));
 
   std::cout<<"MMA: "<<MMA{}<<" size mma: "<<size(MMA{})<<std::endl;
 
