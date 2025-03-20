@@ -10,6 +10,19 @@ void gen_rand_data(T* data, int n);
 int main() {
   srand(10086);
 
+  cudaDeviceProp props;
+  cudaError_t error = cudaGetDeviceProperties(&props, 0);
+  if (error != cudaSuccess) {
+    std::cerr << "cudaGetDeviceProperties() returned an error: " << cudaGetErrorString(error) << std::endl;
+    return -1;
+  }
+
+  if (props.major < 8) {
+    std::cout << "This example requires an Ampere GPU or newer (CC >= 80)" << std::endl;
+    // Return 0 so tests pass if run on unsupported architectures or CUDA Toolkits.
+    return 0;
+  }
+
   const int m = 81920;
   const int n = 256;
   const int k = 256;
@@ -40,7 +53,7 @@ int main() {
   using MMA = decltype(make_tiled_mma(mma_atom{}, make_layout(Shape<_2, _2, _1>{}), make_layout(Shape<_1, _2, _1>{})));
 
   std::cout<<" size mma: "<<size(MMA{})<<std::endl;
-
+  std::cout<<" size mma: "<<shape(MMA{})<<std::endl;
 }
 
 template <typename T>
