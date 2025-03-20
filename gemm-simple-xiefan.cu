@@ -42,6 +42,9 @@ int main() {
 
   std::cout<<" size mma: "<<size(mma)<<std::endl;
   print(mma);
+
+  print_latex(mma);
+
 }
 
 template <typename T>
