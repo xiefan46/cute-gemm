@@ -40,7 +40,7 @@ int main() {
 
   TiledMMA mma = make_tiled_mma(mma_atom{}, make_layout(Shape<_2, _2, _1>{}), make_layout(Shape<_1, _2, _1>{}));
 
-  std::cout<<" size mma: "<<size(MMA{})<<std::endl;
+  std::cout<<" size mma: "<<size(mma)<<std::endl;
   print(mma);
 }
 
