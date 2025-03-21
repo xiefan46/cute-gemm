@@ -8,7 +8,7 @@ void gen_rand_data(T* data, int n);
 
 
 template <typename T, int bM, int bN, int bK, class TiledMma>
-__global__ void gemm_simple(T* Aptr, T* Bptr, T* Cptr, int m, int n, int k, TiledMma mma) {
+__global__ static void gemm_simple(T* Aptr, T* Bptr, T* Cptr, int m, int n, int k, TiledMma mma) {
   using namespace cute;
 
   Tensor A = make_tensor(make_gmem_ptr(Aptr), make_shape(m, k), make_stride(k, 1));
