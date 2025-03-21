@@ -56,7 +56,7 @@ int main() {
 
   auto bM = Int<128>{};
   auto bN = Int<128>{};
-  auto bK = Int<8>{};
+  auto bK = Int<32>{};
 
 
 
