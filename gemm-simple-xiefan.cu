@@ -16,9 +16,11 @@ __global__ static void gemm_simple(T* Aptr, T* Bptr, T* Cptr, int m, int n, int 
   Tensor C = make_tensor(make_gmem_ptr(Cptr), make_shape(m, n), make_stride(n, 1));
 
   const int bx = blockIdx.x, by = blockIdx.y;
-  Tensor gA = make_tiled(A, make_shape(bM, bK), make_coord(by, _));
-  Tensor gB = make_tiled(B, make_shape(bN, bK), make_coord(bx, _));
-  Tensor gC = make_tiled(B, make_shape(bM, bN), make_coord(by, bx));
+
+  Tensor gA = local_tiled(make_gmem_ptr(A), make_tile(Int<bM>{}, Int<bK>{}), make_coord(by, _));
+  Tensor gB = local_tiled(make_gmem_ptr(B), make_tile(Int<bN>{}, Int<bK>{}), make_coord(by, _));
+  Tensor gC = local_tiled(make_gmem_ptr(C), make_tile(Int<bM>{}, Int<bM>{}), make_coord(by, bx));
+
 
   auto thr_mma = mma.get_slice(threadIdx.x);
   Tensor tAgA = thr_mma.partition_A(gA);
