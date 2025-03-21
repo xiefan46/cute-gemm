@@ -29,16 +29,16 @@ __global__ static void gemm_simple(T* Aptr, T* Bptr, T* Cptr, int m, int n, int 
   Tensor tBrB = thr_mma.partition_fragment_B(gB(_, _, 0));
   Tensor tCrC = thr_mma.partition_fragment_C(gC(_, _));
 
-  cute::clear(tCrC);
+  clear(tCrC);
 
   const int num_tiled_k = size<2>(gA);
   for (int i = 0; i < num_tiled_k; i++) {
-    cute::copy(tAgA, tArA);
-    cute::copy(tBgB, tBrB);
-    cute::gemm(thr_mma, tCrC, tArA, tBrB, tCrC);
+    copy(tAgA(_, _, _, i), tArA);
+    copy(tBgB(_, _, _, i), tBrB);
+    gemm(mma, tCrC, tArA, tBrB, tCrC);
   }
 
-  cute::copy(tCrC, tCgC);
+  copy(tCrC, tCgC);
 
 }
 
