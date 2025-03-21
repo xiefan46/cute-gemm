@@ -20,14 +20,14 @@ __global__ void gemm_simple(T* Aptr, T* Bptr, T* Cptr, int m, int n, int k, Tile
   Tensor gB = make_tiled(B, make_shape(bN, bK), make_coord(bx, _));
   Tensor gC = make_tiled(B, make_shape(bM, bN), make_coord(by, bx));
 
-  ThrMMA thr_mma = mma.get_slice(threadIdx.x);
+  auto thr_mma = mma.get_slice(threadIdx.x);
   Tensor tAgA = thr_mma.partition_A(gA);
   Tensor tBgB = thr_mma.partition_B(gB);
   Tensor tCgC = thr_mma.partition_C(gC);
 
-  Tensor tArA = thr_mma.partition_fragment_A(ga(_, _, 0));
-  Tensor tBrB = thr_mma.partition_fragment_B(gb(_, _, 0));
-  Tensor tCrC = thr_mma.partition_fragment_C(gc(_, _));
+  Tensor tArA = thr_mma.partition_fragment_A(gA(_, _, 0));
+  Tensor tBrB = thr_mma.partition_fragment_B(gB(_, _, 0));
+  Tensor tCrC = thr_mma.partition_fragment_C(gC(_, _));
 
   clear(tCrC);
 
@@ -68,8 +68,8 @@ int main() {
   cudaMalloc(&Bptr_d, sizeof(T) * n * k);
   cudaMalloc(&Cptr_d, sizeof(T) * m * n);
 
-  T* Aptr_h;
-  T* Bptr_h;
+  T* Aptr_h = (T*)malloc(sizeof(T) * m * k);
+  T* Bptr_h = (T*)malloc(sizeof(T) * n * k);
   gen_rand_data(Aptr_h, m * k);
   gen_rand_data(Bptr_h, n * k);
 
@@ -113,8 +113,8 @@ int main() {
     cublasStatus_t ret = cublasHgemm(handle, CUBLAS_OP_T, CUBLAS_OP_N,
               n, m, k,
               &alpha,
-              (half *)Bptr, k,
-              (half *)Aptr, k,
+              (half *)Bptr_d, k,
+              (half *)Aptr_d, k,
               &beta,
               (half *)Cptr_cublas, n);
     if (ret != CUBLAS_STATUS_SUCCESS) {
@@ -133,7 +133,7 @@ int main() {
   Cptr_cublas_host = (T*)malloc(sizeof(T) * m * n);
 
   // compare
-  cudaMemcpy(Cptr_host, Cptr, sizeof(T) * m * n, cudaMemcpyDeviceToHost);
+  cudaMemcpy(Cptr_host, Cptr_d, sizeof(T) * m * n, cudaMemcpyDeviceToHost);
   cudaMemcpy(Cptr_cublas_host, Cptr_cublas, sizeof(T) * m * n, cudaMemcpyDeviceToHost);
 
   float threshold = 0.1;
