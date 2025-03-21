@@ -89,10 +89,10 @@ int main() {
   // print_latex(mma);
 
   dim3 block(size(mma));
-  dim3 grid(n / bN, m / BM);
+  dim3 grid(n / bN, m / bM);
 
   for (int i = 0; i < 100; i++) {
-    gemm_simple<T, bM, bN, bK, mma><<<grid, block>>>(Aptr_d, Bptr_d, Cptr_d, m, n, k);
+    gemm_simple<T, bM, bN, bK><<<grid, block>>>(Aptr_d, Bptr_d, Cptr_d, m, n, k, mma);
   }
 
   cudaDeviceSynchronize();
