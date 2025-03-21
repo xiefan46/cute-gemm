@@ -17,9 +17,9 @@ __global__ static void gemm_simple(T* Aptr, T* Bptr, T* Cptr, int m, int n, int 
 
   const int bx = blockIdx.x, by = blockIdx.y;
 
-  Tensor gA = local_tiled(make_gmem_ptr(A), make_tile(Int<bM>{}, Int<bK>{}), make_coord(by, _));
-  Tensor gB = local_tiled(make_gmem_ptr(B), make_tile(Int<bN>{}, Int<bK>{}), make_coord(by, _));
-  Tensor gC = local_tiled(make_gmem_ptr(C), make_tile(Int<bM>{}, Int<bM>{}), make_coord(by, bx));
+  Tensor gA = local_tile(make_gmem_ptr(A), make_tile(Int<bM>{}, Int<bK>{}), make_coord(by, _));
+  Tensor gB = local_tile(make_gmem_ptr(B), make_tile(Int<bN>{}, Int<bK>{}), make_coord(by, _));
+  Tensor gC = local_tile(make_gmem_ptr(C), make_tile(Int<bM>{}, Int<bM>{}), make_coord(by, bx));
 
 
   auto thr_mma = mma.get_slice(threadIdx.x);
