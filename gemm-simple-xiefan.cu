@@ -31,7 +31,7 @@ __global__ void gemm_simple(T* Aptr, T* Bptr, T* Cptr, int m, int n, int k, Tile
 
   clear(tCrC);
 
-  const int num_tiled_k = size<2>(ga);
+  const int num_tiled_k = size<2>(gA);
   for (int i = 0; i < num_tiled_k; i++) {
     copy(tAgA, tArA);
     copy(tBgB, tBrB);
