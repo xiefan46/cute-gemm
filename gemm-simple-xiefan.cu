@@ -12,13 +12,13 @@ __global__ static void gemm_simple(T* Aptr, T* Bptr, T* Cptr, int m, int n, int 
   using namespace cute;
 
   Tensor A = make_tensor(make_gmem_ptr(Aptr), make_shape(m, k), make_stride(k, 1));
-  Tensor B = make_tensor(make_gmem_ptr(Bptr), make_shape(n, k), make_stride(1, n));
+  Tensor B = make_tensor(make_gmem_ptr(Bptr), make_shape(n, k), make_stride(k, 1));
   Tensor C = make_tensor(make_gmem_ptr(Cptr), make_shape(m, n), make_stride(n, 1));
 
   const int bx = blockIdx.x, by = blockIdx.y;
 
   Tensor gA = local_tile(make_gmem_ptr(A), make_tile(Int<bM>{}, Int<bK>{}), make_coord(by, _));
-  Tensor gB = local_tile(make_gmem_ptr(B), make_tile(Int<bN>{}, Int<bK>{}), make_coord(by, _));
+  Tensor gB = local_tile(make_gmem_ptr(B), make_tile(Int<bN>{}, Int<bK>{}), make_coord(bx, _));
   Tensor gC = local_tile(make_gmem_ptr(C), make_tile(Int<bM>{}, Int<bM>{}), make_coord(by, bx));
 
 
