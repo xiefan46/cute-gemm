@@ -54,8 +54,6 @@ int main() {
   const int n = 256;
   const int k = 256;
 
-  auto prob_shape = make_shape(m, n, k);
-
   auto bM = Int<128>{};
   auto bN = Int<128>{};
   auto bK = Int<8>{};
@@ -93,7 +91,7 @@ int main() {
   dim3 block(size(mma));
   dim3 grid(n / bN, m / bM);
 
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < 1; i++) {
     gemm_simple<T, bM, bN, bK><<<grid, block>>>(Aptr_d, Bptr_d, Cptr_d, m, n, k, mma);
   }
 
@@ -111,7 +109,7 @@ int main() {
 
   half alpha = half(1.f);
   half beta = half(0.f);
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 1; ++i) {
     cublasStatus_t ret = cublasHgemm(handle, CUBLAS_OP_T, CUBLAS_OP_N,
               n, m, k,
               &alpha,
@@ -143,7 +141,7 @@ int main() {
     float v1 = Cptr_host[i];
     float v2 = Cptr_cublas_host[i];
     if (fabs(v2 - v1) > threshold) {
-      printf("v1 = %f, v2 = %f\n", v1, v2);
+      printf("error! v1 = %f, v2 = %f\n", v1, v2);
     }
   }
 
