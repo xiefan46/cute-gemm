@@ -7,7 +7,7 @@ template <typename T>
 void gen_rand_data(T* data, int n);
 
 
-template <typename T, int bM, int bN, int bK>
+template <typename T, int bM, int bN, int bK, class TiledMma>
 __global__ void gemm_simple(T* Aptr, T* Bptr, T* Cptr, int m, int n, int k, TiledMma mma) {
   using namespace cute;
 
